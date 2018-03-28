@@ -111,9 +111,12 @@ void creportasn_task_cb() {
    // don't run on dagroot
    if (idmanager_getIsDAGroot()) {
       //opentimers_stop(creportasn_vars.timerId);
-      // openserial_printError(COMPONENT_CREPORTASN,66,
-      //                       (errorparameter_t)0,
-      //                       (errorparameter_t)0);
+      // openserial_printInfo(
+      //    COMPONENT_CREPORTASN,
+      //    ERR_GREEN_HERE,
+      //    (errorparameter_t)0,
+      //    (errorparameter_t)0
+      // );
       return;
    }
    // hardcode for emergency data duration
@@ -152,9 +155,9 @@ void creportasn_task_cb() {
    // create a CoAP RD packet
    pkt = openqueue_getFreePacketBuffer(COMPONENT_CREPORTASN);
    if (pkt==NULL) {
-      openserial_printError(
+      openserial_printInfo(
          COMPONENT_CREPORTASN,
-         ERR_NO_FREE_PACKET_BUFFER,
+         ERR_GREEN_HERE,
          (errorparameter_t)0,
          (errorparameter_t)0
       );

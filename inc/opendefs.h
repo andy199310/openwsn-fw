@@ -271,6 +271,8 @@ enum {
    //l3
    ERR_6LORH_DEADLINE_EXPIRED		       = 0x42, // the received packet has expired
    ERR_6LORH_DEADLINE_DROPPED          = 0x43, // packet expiry time reached, dropped
+
+   ERR_GREEN_HERE                      = 0xF0, // Here \o/
 };
 
 //=========================== typedef =========================================

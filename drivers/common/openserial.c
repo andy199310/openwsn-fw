@@ -462,40 +462,68 @@ void openserial_stop() {
                     // test if need reset
                     uint8_t data[200];
                     memcpy(data, &openserial_vars.inputBuf[1],inputBufFill-1);
-                    if(data[0] == (1 << 7)){
-                        schedule_resetAllDistributeCell();
-                    }
-         
-                    //get entry count;
+
+                    // Get common header
+                    uint8_t commonLength = data[0] >> 4;
                     uint8_t entryCount = data[1];
-                    for(int i=0; i<entryCount; i++){
-                        uint8_t baseOffset = i*11+2;
-                        open_addr_t     temp_neighbor;
-                        memset(&temp_neighbor,0,sizeof(temp_neighbor));
-                        temp_neighbor.type = ADDR_64B;
-                        uint8_t slotOffset = data[baseOffset];
-                        uint8_t channelOffset = data[baseOffset+1];
-                        uint8_t cellType = data[baseOffset+2];
-                        for(int j=0; j<8; j++){
-                            temp_neighbor.addr_64b[j] = data[baseOffset+3+j];
+
+                    uint8_t entryLength = 2 + (16 - commonLength);
+                    uint8_t currentPointer = 2;
+
+                    uint8_t scheduleType;
+                    uint8_t scheduleChannelOffset;
+                    uint8_t scheduleSlotOffset;
+                    uint8_t cellType;
+                    open_addr_t temp_neighbor;
+
+                    // copy self address
+                    memset(&temp_neighbor, 0, sizeof(temp_neighbor));
+                    temp_neighbor.type = ADDR_64B;
+                    memcpy(&(temp_neighbor.addr_64b), idmanager_getMyID(ADDR_64B)->addr_64b, 8);
+         
+                    // iterate all the entry
+                    for (int i=0; i<entryCount; i++){
+                        if (i > 0){
+                            currentPointer += entryLength;
                         }
 
-                        if(cellType==(1<<6)){  //1 TX 0 RX
-                            cellType = CELLTYPE_TX;
-                        }else{
-                            cellType = CELLTYPE_RX;
+                        scheduleType = data[currentPointer] >> 4;
+                        scheduleChannelOffset = data[currentPointer] & 0x0F;
+                        scheduleSlotOffset = data[currentPointer + 1];
+                        memcpy(&(temp_neighbor.addr_64b[8 - (16 - commonLength)]), &(data[currentPointer + 2]), 16 - commonLength);
+
+
+                        if (scheduleType >= 0b1000) {
+                           // remove cell
+                           schedule_removeActiveSlot(scheduleSlotOffset, &temp_neighbor);
+                           continue;
                         }
+
+                        switch (scheduleType) {
+                           case 0b0000:
+                              cellType = CELLTYPE_TX;
+                              break;
+                           case 0b0001:
+                              cellType = CELLTYPE_RX;
+                              break;
+                           case 0b0010:
+                              cellType = CELLTYPE_TXRX;
+                              break;
+                           default:
+                              continue;
+                        }
+
                         schedule_addActiveSlot(
-                            slotOffset,                    // slot offset
-                            cellType,                     // type of slot
-                            FALSE,                                 // shared?
-                            channelOffset,                                     // channel offset
-                            &temp_neighbor                         // neighbor
+                           scheduleSlotOffset,        // slot offset
+                           cellType,                  // type of slot
+                           FALSE,                     // shared?
+                           scheduleChannelOffset,     // channel offset
+                           &temp_neighbor             // neighbor
                         );
+
                     }
                 }
                 break;
-
         }
         // call registered commands
         if (openserial_vars.registeredCmd!=NULL && openserial_vars.registeredCmd->cmdId==cmdByte) {
