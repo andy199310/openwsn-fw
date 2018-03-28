@@ -1,10 +1,10 @@
-#ifndef __CREPORTASN_H
-#define __CREPORTASN_H
+#ifndef __CSCHEDULE_H
+#define __CSCHEDULE_H
 
 /**
-\addtogroup AppUdp
+\addtogroup AppCoAP
 \{
-\addtogroup creportasn
+\addtogroup cschedule
 \{
 */
 #include "opencoap.h"
@@ -14,25 +14,18 @@
 
 typedef struct {
    coap_resource_desc_t desc;
-   opentimers_id_t      timerId;
-   bool                 isEmergency;
-   uint8_t              creportasn_sequence;
-   uint8_t              lastSuccessLeft;
-   uint8_t              errorCounter;
-   uint8_t              lastCallbackSequence;
-
-} creportasn_vars_t;
+} cschedule_vars_t;
 
 //=========================== variables =======================================
 
 //=========================== prototypes ======================================
 
-void creportasn_init(void);
-
+void cschedule__init(void);
 
 /**
 \}
 \}
 */
+
 
 #endif

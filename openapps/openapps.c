@@ -17,6 +17,8 @@
 #include "creportasn.h"
 #include "cexample.h"
 #include "cstorm.h"
+#include "cschedule.h"
+
 // UDP
 #include "uecho.h"
 #include "uinject.h"
@@ -46,7 +48,8 @@ void openapps_init(void) {
    rrt_init();
 
    creportasn_init();
-   
+   cschedule__init();
+
    // UDP
    uecho_init();
    uinject_init();

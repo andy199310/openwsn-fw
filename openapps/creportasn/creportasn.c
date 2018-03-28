@@ -66,7 +66,7 @@ void creportasn_init() {
 
    // hardcode for emergency data duration
    if(idmanager_getMyID(ADDR_64B)->addr_64b[7] == 0xde || idmanager_getMyID(ADDR_64B)->addr_64b[7] == 0xf6){
-     creportasn_vars.isEmergency = true;
+     creportasn_vars.isEmergency = TRUE;
      opentimers_scheduleIn(
        creportasn_vars.timerId, 
        CREPORTASN_EMERGENCY_PERIOD, 
@@ -75,7 +75,7 @@ void creportasn_init() {
        creportasn_timer_cb
      );
    }else{
-     creportasn_vars.isEmergency = false;
+     creportasn_vars.isEmergency = FALSE;
      opentimers_scheduleIn(
        creportasn_vars.timerId, 
        CREPORTASN_PERIOD, 
