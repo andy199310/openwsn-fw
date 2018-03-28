@@ -182,11 +182,11 @@ enum {
    COMPONENT_USERIALBRIDGE             = 0x28,
    COMPONENT_UEXPIRATION               = 0x29,
    COMPONENT_UMONITOR                  = 0x2a,
-   COMPONENT_CSCHEDULE                 = 0x2b,
 
    // custom
    COMPONENT_CGREEN                    = 0x50,
    COMPONENT_CREPORTASN                = 0x51,
+   COMPONENT_CSCHEDULE                 = 0x52,
 };
 
 /**

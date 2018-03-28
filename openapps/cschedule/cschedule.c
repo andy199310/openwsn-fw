@@ -59,68 +59,70 @@ owerror_t cschedule_receive(OpenQueueEntry_t* msg,
    
    switch (coap_header->Code) {
       case COAP_CODE_REQ_POST:
-         openserial_printInfo(COMPONENT_CSCHEDULE, ERR_BOOTED, 0, 0);
-         // try sending data
-         // openserial_printInfo(COMPONENT_CGREEN, ERR_BUSY_RECEIVING, 1, 0);
-         
-
-
-         // test if need reset
-         if(msg->payload[0] == (1 << 7)){
-            schedule_resetAllDistributeCell();
-         }
-         
-         //get entry count;
+         ;
+         // Get common header
+         uint8_t commonLength = msg->payload[0] >> 4;
          uint8_t entryCount = msg->payload[1];
-         // openserial_printInfo(COMPONENT_CGREEN, ERR_UNSUPPORTED_COMMAND, entryCount, 0);
-         for(int i=0; i<entryCount; i++){
-            uint8_t baseOffset = i*11+2;
-            // openserial_printInfo(COMPONENT_CGREEN, ERR_MSG_UNKNOWN_TYPE, baseOffset, 0);
-            open_addr_t     temp_neighbor;
-            memset(&temp_neighbor,0,sizeof(temp_neighbor));
-            temp_neighbor.type = ADDR_64B;
-            uint8_t slotOffset = msg->payload[baseOffset];
-            uint8_t channelOffset = msg->payload[baseOffset+1];
-            uint8_t cellType = msg->payload[baseOffset+2];
-            for(int j=0; j<8; j++){
-               temp_neighbor.addr_64b[j] = msg->payload[baseOffset+3+j];
+
+         uint8_t entryLength = 2 + (16 - commonLength);
+         uint8_t currentPointer = 2;
+
+         uint8_t scheduleType;
+         uint8_t scheduleChannelOffset;
+         uint8_t scheduleSlotOffset;
+         uint8_t cellType;
+         open_addr_t temp_neighbor;
+
+         // copy self address
+         memset(&temp_neighbor, 0, sizeof(temp_neighbor));
+         temp_neighbor.type = ADDR_64B;
+         memcpy(&(temp_neighbor.addr_64b), idmanager_getMyID(ADDR_64B)->addr_64b, 8);
+         
+         // iterate all the entry
+         for (int i=0; i<entryCount; i++){
+            if (i > 0){
+               currentPointer += entryLength;
             }
-            
-            if(cellType==(1<<6)){  //1 TX 0 RX
-               cellType = CELLTYPE_TX;
-            }else{
-               cellType = CELLTYPE_RX;
+
+            scheduleType = msg->payload[currentPointer] >> 4;
+            scheduleChannelOffset = msg->payload[currentPointer] & 0x0F;
+            scheduleSlotOffset = msg->payload[currentPointer + 1];
+            memcpy(&(temp_neighbor.addr_64b[8 - (16 - commonLength)]), &(msg->payload[currentPointer + 2]), 16 - commonLength);
+
+
+            if (scheduleType >= 0b1000) {
+               // remove cell
+               schedule_removeActiveSlot(scheduleSlotOffset, &temp_neighbor);
+               continue;
             }
+
+            switch (scheduleType) {
+               case 0b0000:
+                  cellType = CELLTYPE_TX;
+                  break;
+               case 0b0001:
+                  cellType = CELLTYPE_RX;
+                  break;
+               case 0b0010:
+                  cellType = CELLTYPE_TXRX;
+                  break;
+               default:
+                  continue;
+            }
+
             schedule_addActiveSlot(
-               slotOffset,                    // slot offset
-               cellType,                     // type of slot
-               FALSE,                                 // shared?
-               channelOffset,                                     // channel offset
-               &temp_neighbor                         // neighbor
+               scheduleSlotOffset,        // slot offset
+               cellType,                  // type of slot
+               FALSE,                     // shared?
+               scheduleChannelOffset,     // channel offset
+               &temp_neighbor             // neighbor
             );
+
          }
+
          
          msg->payload                     = &(msg->packet[127]);
          msg->length                      = 0;
-         coap_header->Code                = COAP_CODE_RESP_CONTENT;
-         
-         outcome                          = E_SUCCESS;
-
-         break;
-      case COAP_CODE_REQ_DELETE:
-         // new method
-         // openserial_printInfo(COMPONENT_CGREEN, ERR_INVALIDSERIALFRAME, 0, 0);
-         //reset packet
-         msg->payload                     = &(msg->packet[127]);
-         msg->length                      = 0;
-
-
-         char messageToSend[] = "Hello from Green.";
-
-         packetfunctions_reserveHeaderSize(msg, sizeof(messageToSend)-1);
-         memcpy(&msg->payload[0], &messageToSend, sizeof(messageToSend)-1);
-         packetfunctions_reserveHeaderSize(msg,1);
-         msg->payload[0] = COAP_PAYLOAD_MARKER;
          coap_header->Code                = COAP_CODE_RESP_CONTENT;
          
          outcome                          = E_SUCCESS;

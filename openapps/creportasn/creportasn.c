@@ -111,9 +111,9 @@ void creportasn_task_cb() {
    // don't run on dagroot
    if (idmanager_getIsDAGroot()) {
       //opentimers_stop(creportasn_vars.timerId);
-      openserial_printError(123,66,
-                            (errorparameter_t)0,
-                            (errorparameter_t)0);
+      // openserial_printError(COMPONENT_CREPORTASN,66,
+      //                       (errorparameter_t)0,
+      //                       (errorparameter_t)0);
       return;
    }
    // hardcode for emergency data duration
