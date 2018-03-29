@@ -28,6 +28,9 @@
 
 openserial_vars_t openserial_vars;
 
+#define LESS_PRINT 
+// #define LESS_PRINT {return;}
+
 //=========================== prototypes ======================================
 
 // printing
@@ -345,6 +348,7 @@ void openserial_startOutput() {
                 break;
             }
         case STATUS_OUTBUFFERINDEXES:
+            LESS_PRINT
             if (debugPrint_outBufferIndexes()==TRUE) {
                 break;
             }
@@ -353,10 +357,12 @@ void openserial_startOutput() {
                 break;
             }
         case STATUS_MACSTATS:
+            LESS_PRINT
             if (debugPrint_macStats()==TRUE) {
                 break;
             }
         case STATUS_SCHEDULE:
+            LESS_PRINT
             if(debugPrint_schedule()==TRUE) {
                 break;
             }
@@ -365,10 +371,12 @@ void openserial_startOutput() {
                 break;
             }
         case STATUS_QUEUE:
+            LESS_PRINT
             if(debugPrint_queue()==TRUE) {
                 break;
             }
         case STATUS_NEIGHBORS:
+            LESS_PRINT
             if (debugPrint_neighbors()==TRUE) {
                 break;
             }

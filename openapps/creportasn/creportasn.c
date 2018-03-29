@@ -32,6 +32,7 @@ const uint8_t creportasn_path0[] = "reportasn";
 
 creportasn_vars_t creportasn_vars;
 
+
 //=========================== prototypes ======================================
 
 owerror_t creportasn_receive(OpenQueueEntry_t* msg,
@@ -111,12 +112,12 @@ void creportasn_task_cb() {
    // don't run on dagroot
    if (idmanager_getIsDAGroot()) {
       //opentimers_stop(creportasn_vars.timerId);
-      // openserial_printInfo(
-      //    COMPONENT_CREPORTASN,
-      //    ERR_GREEN_HERE,
-      //    (errorparameter_t)0,
-      //    (errorparameter_t)0
-      // );
+      openserial_printInfo(
+         COMPONENT_CREPORTASN,
+         ERR_GREEN_HERE,
+         (errorparameter_t)0,
+         (errorparameter_t)0
+      );
       return;
    }
    // hardcode for emergency data duration

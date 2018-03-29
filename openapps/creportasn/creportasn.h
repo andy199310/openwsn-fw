@@ -12,6 +12,7 @@
 
 //=========================== typedef =========================================
 
+
 typedef struct {
    coap_resource_desc_t desc;
    opentimers_id_t      timerId;
