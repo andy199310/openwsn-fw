@@ -177,7 +177,7 @@ void creportasn_task_cb() {
    uint8_t* pointer = &pkt->payload[2];
    ieee154e_getAsn(pointer);
 
-   memset(&pkt->payload[7], 0, 5)
+   memset(&pkt->payload[7], 0, 5);
 
    uint8_t numDeSync;
    ieee154e_getNumDesync(&numDeSync);
