@@ -16,10 +16,10 @@ typedef struct {
    coap_resource_desc_t desc;
    opentimers_id_t      timerId;
    bool                 isEmergency;
-   uint8_t              creportasn_sequence;
-   uint8_t              lastSuccessLeft;
-   uint8_t              errorCounter;
-   uint8_t              lastCallbackSequence;
+   uint16_t             creportasn_sequence;
+   uint16_t             lastSuccessLeft;
+   uint16_t             errorCounter;
+   uint16_t             lastCallbackSequence;
 
 } creportasn_vars_t;
 

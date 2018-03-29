@@ -24,7 +24,7 @@
 /// inter-packet period (in ms)
 #define CREPORTASN_PERIOD  20000
 #define CREPORTASN_EMERGENCY_PERIOD  2000
-#define PAYLOADLEN      23
+#define PAYLOADLEN      27
 
 const uint8_t creportasn_path0[] = "reportasn";
 
@@ -177,6 +177,8 @@ void creportasn_task_cb() {
    uint8_t* pointer = &pkt->payload[2];
    ieee154e_getAsn(pointer);
 
+   memset(&pkt->payload[7], 0, 5)
+
    uint8_t numDeSync;
    ieee154e_getNumDesync(&numDeSync);
 
@@ -199,17 +201,23 @@ void creportasn_task_cb() {
    pkt->payload[15] = parentTx;
    pkt->payload[16] = parentTxACK;
 
-   pkt->payload[17] = creportasn_vars.lastSuccessLeft;
-   pkt->payload[18] = creportasn_vars.errorCounter;
+   // pkt->payload[17] = creportasn_vars.lastSuccessLeft;
+   memcpy(&(pkt->payload[17]), &(creportasn_vars.lastSuccessLeft), 2);
+
+   // pkt->payload[18] = creportasn_vars.errorCounter;
+   memcpy(&(pkt->payload[19]), &(creportasn_vars.errorCounter), 2);
 
    creportasn_vars.creportasn_sequence++;
 
-   pkt->payload[19] = creportasn_vars.creportasn_sequence;
-   pkt->payload[20] = creportasn_vars.lastCallbackSequence;
+   // pkt->payload[19] = creportasn_vars.creportasn_sequence;
+   memcpy(&(pkt->payload[21]), &(creportasn_vars.creportasn_sequence), 2);
 
-   pkt->payload[21] = parentRssi;
+   // pkt->payload[20] = creportasn_vars.lastCallbackSequence;
+   memcpy(&(pkt->payload[23]), &(creportasn_vars.lastCallbackSequence), 2);
 
-   pkt->payload[22] = creportasn_vars.isEmergency;
+   pkt->payload[25] = parentRssi;
+
+   pkt->payload[26] = creportasn_vars.isEmergency;
    
    packetfunctions_reserveHeaderSize(pkt,1);
    pkt->payload[0] = COAP_PAYLOAD_MARKER;
