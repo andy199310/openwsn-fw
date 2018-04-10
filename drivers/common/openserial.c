@@ -177,18 +177,18 @@ owerror_t openserial_printCritical(
     opentimers_id_t id; 
     uint32_t         reference;
     // blink error LED, this is serious
-    leds_error_blink();
+    // leds_error_blink();
     
     // schedule for the mote to reboot in 10s
-    id        = opentimers_create();
-    reference = opentimers_getValue();
-    opentimers_scheduleAbsolute(
-        id,                             // timerId
-        10000,                          // duration
-        reference,                      // reference
-        TIME_MS,                        // timetype
-        openserial_board_reset_cb       // callback
-    );
+    // id        = opentimers_create();
+    // reference = opentimers_getValue();
+    // opentimers_scheduleAbsolute(
+    //     id,                             // timerId
+    //     10000,                          // duration
+    //     reference,                      // reference
+    //     TIME_MS,                        // timetype
+    //     openserial_board_reset_cb       // callback
+    // );
     
     return openserial_printInfoErrorCritical(
         SERFRAME_MOTE2PC_CRITICAL,
