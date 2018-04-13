@@ -46,6 +46,7 @@ void cschedule__init() {
    cschedule_vars.desc.callbackRx           = &cschedule_receive;
    cschedule_vars.desc.callbackSendDone     = &cschedule_sendDone;
    
+   cschedule_vars.lastScheduleSequenceNumber = 0;
    
    opencoap_register(&cschedule_vars.desc);
 }
@@ -62,10 +63,22 @@ owerror_t cschedule_receive(OpenQueueEntry_t* msg,
          ;
          // Get common header
          uint8_t commonLength = msg->payload[0] >> 4;
+         uint8_t scheduleSequenceNumber = msg->payload[0] & 0x0F;
          uint8_t entryCount = msg->payload[1];
 
          uint8_t entryLength = 2 + (16 - commonLength);
          uint8_t currentPointer = 2;
+
+         // if(scheduleSequenceNumber <= cschedule_vars.lastScheduleSequenceNumber){
+         //    // Duplicate schedule sequence!
+         //    openserial_printInfo(
+         //       COMPONENT_CREPORTASN,
+         //       COMPONENT_CSCHEDULE,
+         //       (errorparameter_t)cschedule_vars.lastScheduleSequenceNumber,
+         //       (errorparameter_t)scheduleSequenceNumber
+         //    );
+            
+         // }
 
          uint8_t scheduleType;
          uint8_t scheduleChannelOffset;

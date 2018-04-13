@@ -14,6 +14,7 @@
 
 typedef struct {
    coap_resource_desc_t desc;
+   uint8_t lastScheduleSequenceNumber;
 } cschedule_vars_t;
 
 //=========================== variables =======================================
