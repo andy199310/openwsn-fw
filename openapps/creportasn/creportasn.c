@@ -22,7 +22,7 @@
 //=========================== defines =========================================
 
 /// inter-packet period (in ms)
-#define CREPORTASN_PERIOD  20000
+#define CREPORTASN_PERIOD  10000
 #define CREPORTASN_EMERGENCY_PERIOD  2000
 #define PAYLOADLEN      27
 
